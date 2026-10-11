@@ -1,0 +1,1272 @@
+
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>
+                body {
+                  background-color: white; /* Ensure the iframe has a white background */
+                }
+
+                /* style.css */
+:root {
+  --primary: #4f46e5;
+  --primary-dark: #4338ca;
+  --primary-light: #eef2ff;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #f59e0b;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-900: #111827;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--gray-900);
+  background: var(--gray-50);
+}
+
+.bg-primary { background-color: var(--primary) !important; }
+.text-primary { color: var(--primary) !important; }
+.btn-primary { background-color: var(--primary); border-color: var(--primary); }
+.btn-primary:hover, .btn-primary:focus { background-color: var(--primary-dark); border-color: var(--primary-dark); }
+.bg-primary-subtle { background-color: var(--primary-light) !important; }
+.text-primary { color: var(--primary) !important; }
+.btn-outline-primary { color: var(--primary); border-color: var(--primary); }
+.btn-outline-primary:hover { background-color: var(--primary); border-color: var(--primary); color:#fff; }
+
+/* Instructions page */
+.instructions-list {
+  padding-left: 1.25rem;
+  line-height: 1.9;
+  color: var(--gray-700);
+}
+.instructions-list li { margin-bottom: 0.4rem; }
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px dashed var(--gray-200);
+}
+.summary-item:last-child { border-bottom: none; }
+.summary-item .label { color: var(--gray-500); font-size: 0.9rem; }
+.summary-item .value { font-weight: 600; color: var(--gray-900); }
+
+.card { transition: transform 0.2s ease; }
+
+/* Live exam header */
+.exam-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  padding: 0.9rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.header-stat {
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+}
+
+.timer-box {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+  transition: all 0.3s;
+}
+.timer-box.warning {
+  background: #dc2626;
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Options */
+.options-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+.option-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border: 2px solid var(--gray-200);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+}
+.option-item:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.option-item.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+.option-label {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  color: var(--gray-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+.option-item.selected .option-label {
+  background: var(--primary);
+  color: white;
+}
+.option-text { flex: 1; font-size: 1rem; }
+
+/* Palette */
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+.palette-btn {
+  aspect-ratio: 1;
+  border: 2px solid var(--gray-200);
+  background: white;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--gray-700);
+}
+.palette-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.palette-btn.active-current { outline: 3px solid var(--gray-900); outline-offset: 2px; }
+
+.palette-btn.status-not-visited { background: white; color: var(--gray-700); }
+.palette-btn.status-visited { background: #a855f7; color: white; border-color: #a855f7; }
+.palette-btn.status-answered { background: var(--success); color: white; border-color: var(--success); }
+.palette-btn.status-review { background: #a855f7; color: white; border-color: #a855f7; position: relative; }
+.palette-btn.status-review::after {
+  content: '';
+  position: absolute;
+  top: -4px; right: -4px;
+  width: 12px; height: 12px;
+  background: var(--warning);
+  border-radius: 50%;
+  border: 2px solid white;
+}
+.palette-btn.status-answered-review { background: var(--success); color: white; border-color: var(--success); position: relative; }
+.palette-btn.status-answered-review::after {
+  content: '';
+  position: absolute;
+  top: -4px; right: -4px;
+  width: 12px; height: 12px;
+  background: var(--warning);
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1rem;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--gray-700);
+}
+.legend-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+  border: 2px solid var(--gray-200);
+}
+.legend-dot.status-not-visited { background: white; }
+.legend-dot.status-visited { background: #a855f7; border-color: #a855f7; }
+.legend-dot.status-answered { background: var(--success); border-color: var(--success); }
+.legend-dot.status-review { background: #a855f7; border-color: #a855f7; }
+.legend-dot.status-answered-review { background: var(--success); border-color: var(--success); }
+
+/* Submit modal stats */
+.submit-stats {
+  background: var(--gray-50);
+  border-radius: 12px;
+  padding: 1rem;
+}
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+.stat-row:last-child { border-bottom: none; }
+
+/* Result page */
+.status-banner {
+  color: white;
+}
+.circular-score {
+  position: relative;
+  width: 160px;
+  height: 160px;
+}
+.circular-score svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+.bg-ring { fill: none; stroke: var(--gray-200); stroke-width: 10; }
+.fg-ring {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.2s ease;
+}
+.score-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.score-center .fw-bold { font-size: 1.8rem; color: var(--gray-900); }
+
+.stat-box {
+  background: var(--gray-50);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid var(--gray-200);
+}
+.stat-label { font-size: 0.8rem; color: var(--gray-500); margin-bottom: 0.25rem; }
+.stat-value { font-size: 1.5rem; font-weight: 700; color: var(--gray-900); }
+
+/* Review cards */
+.review-card { border-left: 4px solid transparent !important; }
+.review-card.review-correct { border-left-color: var(--success) !important; }
+.review-card.review-incorrect { border-left-color: var(--danger) !important; }
+.review-card.review-unanswered { border-left-color: var(--gray-500) !important; }
+
+.review-options { display: grid; gap: 0.5rem; }
+.review-option {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--gray-200);
+  border-radius: 10px;
+  background: white;
+}
+.review-option.correct-answer {
+  border-color: var(--success);
+  background: #f0fdf4;
+}
+.review-option.wrong-answer {
+  border-color: var(--danger);
+  background: #fef2f2;
+}
+.review-option .option-label {
+  width: 30px; height: 30px;
+  font-size: 0.85rem;
+  margin-right: 0.75rem;
+}
+.review-option.correct-answer .option-label { background: var(--success); color: white; }
+.review-option.wrong-answer .option-label { background: var(--danger); color: white; }
+
+.explanation {
+  background: #fffbeb;
+  border-left: 3px solid var(--warning);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--gray-700);
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+  .palette-grid { grid-template-columns: repeat(5, 1fr); }
+  .legend { grid-template-columns: 1fr; }
+}
+@media (max-width: 575.98px) {
+  .option-item { padding: 0.85rem 1rem; }
+  .exam-header .text-white > div .fw-bold { font-size: 0.95rem; }
+  .timer-box { font-size: 1rem; padding: 0.4rem 0.8rem; }
+}
+
+
+              </style>
+                        </head>
+                        <body>
+                            <!-- exam-instructions.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Exam Instructions — General Knowledge Assessment</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-light">
+
+<!-- Top Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">
+      <i class="bi bi-mortarboard-fill me-2"></i>ExamPro
+    </a>
+    <span class="text-white small d-none d-md-inline">Online Examination Portal</span>
+  </div>
+</nav>
+
+<main class="container py-4 py-md-5">
+  <div class="row g-4">
+    <!-- Left: Instructions -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-header bg-white border-0 pt-4 px-4">
+          <div class="d-flex align-items-center">
+            <div class="icon-circle bg-primary bg-opacity-10 text-primary me-3">
+              <i class="bi bi-clipboard-check fs-4"></i>
+            </div>
+            <div>
+              <h4 class="mb-0 fw-bold">Examination Instructions</h4>
+              <small class="text-muted">Please read carefully before starting</small>
+            </div>
+          </div>
+        </div>
+        <div class="card-body px-4 pb-4">
+          <h6 class="fw-bold text-primary mb-3">
+            <i class="bi bi-info-circle me-2"></i>General Instructions
+          </h6>
+          <ol class="instructions-list mb-4">
+            <li>The clock at the top right will display the remaining time. The exam will auto-submit when the timer reaches zero.</li>
+            <li>The Question Palette on the right shows the status of each question using symbols and colors.</li>
+            <li>Click on a question number to go to that question directly.</li>
+            <li>Select one answer by clicking on the option. To deselect, click <em>Clear Response</em>.</li>
+            <li>To mark a question for review, click <em>Mark for Review</em>. Answers marked for review will be evaluated.</li>
+            <li>Negative marking of <strong>−0.25</strong> applies for every incorrect answer.</li>
+            <li>You can navigate between questions freely using the Previous / Next buttons or the palette.</li>
+            <li>To submit the exam, click <em>Submit Examination</em>. A confirmation will appear.</li>
+            <li>Once submitted, you cannot change any answer.</li>
+            <li>Do not refresh or close the browser during the exam. Your progress is auto-saved.</li>
+          </ol>
+
+          <h6 class="fw-bold text-danger mb-3">
+            <i class="bi bi-exclamation-triangle me-2"></i>Important Rules
+          </h6>
+          <ul class="instructions-list text-secondary">
+            <li>Any form of unfair means will lead to immediate disqualification.</li>
+            <li>Use of mobile phones, calculators, or external help is strictly prohibited.</li>
+            <li>Ensure you have a stable internet connection throughout the exam.</li>
+            <li>By clicking <em>Start Examination</em>, you confirm that you have read and understood all instructions.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Summary -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm rounded-4 mb-3">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3">
+            <i class="bi bi-file-earmark-text text-primary me-2"></i>Exam Summary
+          </h5>
+          <div class="summary-item"><span class="label">Exam Title</span><span class="value">General Knowledge Assessment</span></div>
+          <div class="summary-item"><span class="label">Subject</span><span class="value">General Knowledge</span></div>
+          <div class="summary-item"><span class="label">Exam ID</span><span class="value">EXM-2026-001</span></div>
+          <div class="summary-item"><span class="label">Total Questions</span><span class="value">10</span></div>
+          <div class="summary-item"><span class="label">Total Marks</span><span class="value">20</span></div>
+          <div class="summary-item"><span class="label">Duration</span><span class="value">15 Minutes</span></div>
+          <div class="summary-item"><span class="label">Pass Marks</span><span class="value">10 / 20</span></div>
+          <div class="summary-item"><span class="label">Negative Marking</span><span class="value text-danger">−0.25 per wrong</span></div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm rounded-4 mb-3">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3">
+            <i class="bi bi-person-circle text-primary me-2"></i>Student Info
+          </h5>
+          <div class="summary-item"><span class="label">Name</span><span class="value">John Smith</span></div>
+          <div class="summary-item"><span class="label">Student ID</span><span class="value">STU-1024</span></div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="agreeCheck" />
+            <label class="form-check-label" for="agreeCheck">
+              I have read and agree to the examination instructions.
+            </label>
+          </div>
+          <button id="startBtn" class="btn btn-primary w-100 btn-lg fw-semibold" disabled>
+            <i class="bi bi-play-circle me-2"></i>Start Examination
+          </button>
+          <small class="text-muted d-block text-center mt-2">
+            Timer will start once you confirm.
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold"><i class="bi bi-shield-check text-primary me-2"></i>Confirm Start</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>You are about to begin the <strong>General Knowledge Assessment</strong>.</p>
+        <ul class="small text-muted">
+          <li>Duration: 15 minutes</li>
+          <li>Timer starts immediately after confirmation</li>
+          <li>You cannot pause the exam once started</li>
+        </ul>
+        <p class="mb-0 fw-semibold">Are you ready to proceed?</p>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmStartBtn">
+          <i class="bi bi-check-circle me-2"></i>Yes, Start Exam
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="text-center text-muted small py-3">© 2026 ExamPro — Online Examination Portal</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+<script>
+  // If exam already started/submitted, redirect appropriately
+  (function () {
+    const state = loadState();
+    if (state && state.started && !state.submitted) {
+      window.location.href = 'live-examination.html';
+    } else if (state && state.submitted) {
+      window.location.href = 'result-review.html';
+    }
+  })();
+
+  const agreeCheck = document.getElementById('agreeCheck');
+  const startBtn = document.getElementById('startBtn');
+  const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+  const confirmStartBtn = document.getElementById('confirmStartBtn');
+
+  agreeCheck.addEventListener('change', () => {
+    startBtn.disabled = !agreeCheck.checked;
+  });
+
+  startBtn.addEventListener('click', () => confirmModal.show());
+
+  confirmStartBtn.addEventListener('click', () => {
+    // Initialize fresh state
+    const state = {
+      started: true,
+      submitted: false,
+      startTime: Date.now(),
+      duration: 15 * 60, // 15 minutes in seconds
+      currentQuestion: 1,
+      answers: {},
+      visited: { 1: true },
+      markedForReview: {}
+    };
+    saveState(state);
+    confirmModal.hide();
+    window.location.href = 'live-examination.html';
+  });
+</script>
+</body>
+</html>
+<!-- live-examination.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Live Examination — General Knowledge Assessment</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-light">
+
+<!-- Header -->
+<header class="exam-header">
+  <div class="container-fluid px-3 px-md-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-mortarboard-fill fs-4 me-2 text-white"></i>
+        <div class="text-white">
+          <div class="fw-bold lh-1">General Knowledge Assessment</div>
+          <small class="opacity-75">General Knowledge • John Smith</small>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="header-stat text-white">
+          <i class="bi bi-check2-circle me-1"></i>
+          <span id="progressText">0 of 10 answered</span>
+        </div>
+        <div id="timerBox" class="timer-box">
+          <i class="bi bi-clock me-1"></i>
+          <span id="timerDisplay">15:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="container-fluid py-3 px-3 px-md-4">
+  <div class="row g-3">
+    <!-- Question Area -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div>
+              <span class="badge bg-primary-subtle text-primary fw-semibold">
+                Question <span id="qNumber">1</span> of 10
+              </span>
+              <span class="badge bg-light text-dark border ms-2">2 Marks</span>
+            </div>
+            <div>
+              <span id="reviewBadge" class="badge bg-warning text-dark d-none">
+                <i class="bi bi-flag-fill me-1"></i>Marked for Review
+              </span>
+            </div>
+          </div>
+
+          <h5 id="questionText" class="fw-semibold mb-4">Question text will appear here.</h5>
+
+          <div id="optionsContainer" class="options-grid mb-4"></div>
+
+          <div class="d-flex flex-wrap gap-2 mt-4">
+            <button id="clearBtn" class="btn btn-outline-secondary">
+              <i class="bi bi-x-circle me-1"></i>Clear Response
+            </button>
+            <button id="reviewBtn" class="btn btn-outline-warning">
+              <i class="bi bi-flag me-1"></i>Mark for Review
+            </button>
+            <div class="ms-auto d-flex gap-2">
+              <button id="prevBtn" class="btn btn-light border">
+                <i class="bi bi-chevron-left me-1"></i>Previous
+              </button>
+              <button id="nextBtn" class="btn btn-primary">
+                Next<i class="bi bi-chevron-right ms-1"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit button -->
+      <div class="d-flex justify-content-end mt-3">
+        <button id="submitExamBtn" class="btn btn-danger btn-lg fw-semibold px-4">
+          <i class="bi bi-send-check me-2"></i>Submit Examination
+        </button>
+      </div>
+    </div>
+
+    <!-- Question Palette -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0">Question Palette</h6>
+            <button class="btn btn-sm btn-outline-secondary d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#paletteLegend">
+              <i class="bi bi-info-circle"></i>
+            </button>
+          </div>
+
+          <div id="paletteLegend" class="collapse show d-lg-block">
+            <div class="legend mb-3">
+              <div class="legend-item"><span class="legend-dot status-not-visited"></span>Not Visited</div>
+              <div class="legend-item"><span class="legend-dot status-visited"></span>Visited, Not Answered</div>
+              <div class="legend-item"><span class="legend-dot status-answered"></span>Answered</div>
+              <div class="legend-item"><span class="legend-dot status-review"></span>Marked for Review</div>
+              <div class="legend-item"><span class="legend-dot status-answered-review"></span>Answered &amp; Marked</div>
+            </div>
+          </div>
+
+          <div id="palette" class="palette-grid"></div>
+
+          <div class="mt-3 small text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            Click any number to jump to that question.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Submit Confirmation Modal -->
+<div class="modal fade" id="submitModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-danger">
+          <i class="bi bi-exclamation-octagon me-2"></i>Submit Examination?
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-3">Please review your submission summary before confirming.</p>
+        <div class="submit-stats">
+          <div class="stat-row"><span>Answered</span><span id="statAnswered" class="fw-bold text-success">0</span></div>
+          <div class="stat-row"><span>Unanswered</span><span id="statUnanswered" class="fw-bold text-secondary">0</span></div>
+          <div class="stat-row"><span>Marked for Review</span><span id="statReview" class="fw-bold text-warning">0</span></div>
+          <div class="stat-row"><span>Time Remaining</span><span id="statTime" class="fw-bold text-primary">--:--</span></div>
+        </div>
+        <p class="small text-muted mt-3 mb-0">
+          <i class="bi bi-exclamation-triangle text-warning me-1"></i>
+          Once submitted, you cannot change your answers.
+        </p>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Go Back to Exam</button>
+        <button type="button" class="btn btn-danger" id="confirmSubmitBtn">
+          <i class="bi bi-check-circle me-2"></i>Confirm Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+<script>
+  // Guard: if exam not started or already submitted, redirect
+  (function () {
+    const state = loadState();
+    if (!state || !state.started) {
+      alert('No active exam found. Please start from the instructions page.');
+      window.location.href = 'exam-instructions.html';
+      return;
+    }
+    if (state.submitted) {
+      window.location.href = 'result-review.html';
+      return;
+    }
+  })();
+
+  // Warn before leaving
+  window.addEventListener('beforeunload', (e) => {
+    const state = loadState();
+    if (state && state.started && !state.submitted) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  const submitModal = new bootstrap.Modal(document.getElementById('submitModal'));
+  let timerInterval = null;
+
+  // Render palette
+  function renderPalette() {
+    const state = loadState();
+    const palette = document.getElementById('palette');
+    palette.innerHTML = '';
+    for (let i = 1; i <= 10; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'palette-btn ' + getStatusClass(state, i);
+      btn.textContent = i;
+      if (state.currentQuestion === i) btn.classList.add('active-current');
+      btn.addEventListener('click', () => goToQuestion(i));
+      palette.appendChild(btn);
+    }
+  }
+
+  function getStatusClass(state, qNum) {
+    const answered = state.answers[qNum] !== undefined && state.answers[qNum] !== null;
+    const reviewed = state.markedForReview[qNum] === true;
+    const visited = state.visited[qNum] === true;
+    if (answered && reviewed) return 'status-answered-review';
+    if (reviewed) return 'status-review';
+    if (answered) return 'status-answered';
+    if (visited) return 'status-visited';
+    return 'status-not-visited';
+  }
+
+  // Render current question
+  function renderQuestion() {
+    const state = loadState();
+    const qNum = state.currentQuestion;
+    const q = QUESTIONS[qNum - 1];
+
+    document.getElementById('qNumber').textContent = qNum;
+    document.getElementById('questionText').textContent = q.text;
+
+    // Mark visited
+    state.visited[qNum] = true;
+    saveState(state);
+
+    // Options
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    const labels = ['A', 'B', 'C', 'D'];
+    q.options.forEach((opt, idx) => {
+      const div = document.createElement('div');
+      div.className = 'option-item' + (state.answers[qNum] === labels[idx] ? ' selected' : '');
+      div.innerHTML = `
+        <span class="option-label">${labels[idx]}</span>
+        <span class="option-text">${opt}</span>
+      `;
+      div.addEventListener('click', () => selectOption(qNum, labels[idx]));
+      container.appendChild(div);
+    });
+
+    // Review badge
+    const reviewBadge = document.getElementById('reviewBadge');
+    if (state.markedForReview[qNum]) reviewBadge.classList.remove('d-none');
+    else reviewBadge.classList.add('d-none');
+
+    // Nav buttons
+    document.getElementById('prevBtn').disabled = qNum === 1;
+    document.getElementById('nextBtn').disabled = qNum === 10;
+
+    updateProgress();
+    renderPalette();
+  }
+
+  function selectOption(qNum, label) {
+    const state = loadState();
+    if (state.submitted) return;
+    state.answers[qNum] = label;
+    saveState(state);
+    renderQuestion();
+  }
+
+  function goToQuestion(n) {
+    const state = loadState();
+    state.currentQuestion = n;
+    saveState(state);
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress() {
+    const state = loadState();
+    const answered = Object.values(state.answers).filter(v => v !== null && v !== undefined).length;
+    document.getElementById('progressText').textContent = `${answered} of 10 answered`;
+  }
+
+  // Timer
+  function startTimer() {
+    const state = loadState();
+    const endTime = state.startTime + state.duration * 1000;
+
+    function tick() {
+      const now = Date.now();
+      const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
+      const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
+      const ss = String(remaining % 60).padStart(2, '0');
+      const display = document.getElementById('timerDisplay');
+      display.textContent = `${mm}:${ss}`;
+
+      const box = document.getElementById('timerBox');
+      if (remaining <= 120) box.classList.add('warning');
+      else box.classList.remove('warning');
+
+      if (remaining <= 0) {
+        clearInterval(timerInterval);
+        alert('Time is up! Your exam will be submitted automatically.');
+        submitExam();
+        return;
+      }
+    }
+    tick();
+    timerInterval = setInterval(tick, 1000);
+  }
+
+  // Button handlers
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    const state = loadState();
+    if (state.currentQuestion > 1) goToQuestion(state.currentQuestion - 1);
+  });
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    const state = loadState();
+    if (state.currentQuestion < 10) goToQuestion(state.currentQuestion + 1);
+  });
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    const state = loadState();
+    delete state.answers[state.currentQuestion];
+    saveState(state);
+    renderQuestion();
+  });
+  document.getElementById('reviewBtn').addEventListener('click', () => {
+    const state = loadState();
+    const q = state.currentQuestion;
+    state.markedForReview[q] = !state.markedForReview[q];
+    if (!state.markedForReview[q]) delete state.markedForReview[q];
+    saveState(state);
+    renderQuestion();
+  });
+
+  // Submit
+  document.getElementById('submitExamBtn').addEventListener('click', () => {
+    const state = loadState();
+    const answered = Object.values(state.answers).filter(v => v !== null && v !== undefined).length;
+    const review = Object.keys(state.markedForReview).length;
+    document.getElementById('statAnswered').textContent = answered;
+    document.getElementById('statUnanswered').textContent = 10 - answered;
+    document.getElementById('statReview').textContent = review;
+    const endTime = state.startTime + state.duration * 1000;
+    const remaining = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+    const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
+    const ss = String(remaining % 60).padStart(2, '0');
+    document.getElementById('statTime').textContent = `${mm}:${ss}`;
+    submitModal.show();
+  });
+
+  document.getElementById('confirmSubmitBtn').addEventListener('click', () => {
+    submitModal.hide();
+    submitExam();
+  });
+
+  function submitExam() {
+    const state = loadState();
+    if (state.submitted) return; // prevent duplicate
+    state.submitted = true;
+    state.submitTime = Date.now();
+    clearInterval(timerInterval);
+    saveState(state);
+    window.location.href = 'result-review.html';
+  }
+
+  // Init
+  renderQuestion();
+  startTimer();
+</script>
+</body>
+</html>
+<!-- result-review.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Result Review — General Knowledge Assessment</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#">
+      <i class="bi bi-mortarboard-fill me-2"></i>ExamPro
+    </a>
+    <span class="text-white small d-none d-md-inline">Result Review</span>
+  </div>
+</nav>
+
+<main class="container py-4" id="mainContent">
+  <!-- If no state, show fallback -->
+  <div id="noStateMessage" class="text-center py-5 d-none">
+    <div class="card border-0 shadow-sm rounded-4 mx-auto" style="max-width:500px">
+      <div class="card-body p-5">
+        <i class="bi bi-exclamation-circle text-warning" style="font-size:3rem"></i>
+        <h4 class="mt-3 fw-bold">No Exam Result Found</h4>
+        <p class="text-muted">Please start an exam first to see your results.</p>
+        <a href="exam-instructions.html" class="btn btn-primary">
+          <i class="bi bi-arrow-left me-2"></i>Go to Instructions
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div id="resultContent">
+    <!-- Top Status Banner -->
+    <div id="statusBanner" class="status-banner rounded-4 shadow-sm mb-4 p-4 text-white">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+          <div class="small opacity-75">Examination Result</div>
+          <h3 class="fw-bold mb-0" id="statusTitle">Calculating...</h3>
+          <small id="statusSub" class="opacity-75"></small>
+        </div>
+        <div class="text-end">
+          <div class="small opacity-75">Final Score</div>
+          <h2 class="fw-bold mb-0"><span id="scoreDisplay">0</span> / 20</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Summary -->
+      <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 mb-3">
+          <div class="card-body p-4">
+            <h6 class="fw-bold text-primary mb-3">
+              <i class="bi bi-person-circle me-2"></i>Student Details
+            </h6>
+            <div class="summary-item"><span class="label">Name</span><span class="value">John Smith</span></div>
+            <div class="summary-item"><span class="label">Student ID</span><span class="value">STU-1024</span></div>
+            <div class="summary-item"><span class="label">Exam</span><span class="value">General Knowledge Assessment</span></div>
+            <div class="summary-item"><span class="label">Submitted</span><span class="value" id="submitTime">—</span></div>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body p-4 text-center">
+            <h6 class="fw-bold text-primary mb-3">Score Overview</h6>
+            <div class="circular-score mx-auto mb-3">
+              <svg viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="52" class="bg-ring" />
+                <circle id="scoreRing" cx="60" cy="60" r="52" class="fg-ring"
+                        stroke-dasharray="326.7" stroke-dashoffset="326.7" />
+              </svg>
+              <div class="score-center">
+                <div id="percentDisplay" class="fw-bold">0%</div>
+                <small class="text-muted">Percentage</small>
+              </div>
+            </div>
+            <div class="d-flex justify-content-around mt-3">
+              <div class="text-center">
+                <div class="fw-bold text-success fs-5" id="correctCount">0</div>
+                <small class="text-muted">Correct</small>
+              </div>
+              <div class="text-center">
+                <div class="fw-bold text-danger fs-5" id="incorrectCount">0</div>
+                <small class="text-muted">Incorrect</small>
+              </div>
+              <div class="text-center">
+                <div class="fw-bold text-secondary fs-5" id="unansweredCount">0</div>
+                <small class="text-muted">Skipped</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats + Review -->
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 mb-3">
+          <div class="card-body p-4">
+            <h6 class="fw-bold text-primary mb-3">
+              <i class="bi bi-bar-chart me-2"></i>Performance Summary
+            </h6>
+            <div class="row g-3">
+              <div class="col-6 col-md-3">
+                <div class="stat-box">
+                  <div class="stat-label">Total Questions</div>
+                  <div class="stat-value">10</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="stat-box">
+                  <div class="stat-label">Attempted</div>
+                  <div class="stat-value" id="attemptedStat">0</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="stat-box">
+                  <div class="stat-label">Total Marks</div>
+                  <div class="stat-value">20</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="stat-box">
+                  <div class="stat-label">Obtained</div>
+                  <div class="stat-value" id="obtainedStat">0</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <div class="d-flex justify-content-between small mb-1">
+                <span>Progress</span>
+                <span id="progressPercent">0%</span>
+              </div>
+              <div class="progress" style="height:10px;border-radius:10px">
+                <div id="progressBar" class="progress-bar" role="progressbar" style="width:0%"></div>
+              </div>
+              <small class="text-muted d-block mt-2">Passing Marks: <strong>10 / 20</strong></small>
+            </div>
+          </div>
+        </div>
+
+        <h6 class="fw-bold mb-3 px-1">
+          <i class="bi bi-list-check text-primary me-2"></i>Question-by-Question Review
+        </h6>
+        <div id="reviewList" class="d-flex flex-column gap-3"></div>
+
+        <div class="d-flex justify-content-end mt-4 gap-2 flex-wrap">
+          <button id="restartBtn" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-repeat me-2"></i>Restart Demo Exam
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="text-center text-muted small py-3">© 2026 ExamPro — Online Examination Portal</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+<script>
+  (function () {
+    const state = loadState();
+    if (!state || !state.submitted) {
+      document.getElementById('noStateMessage').classList.remove('d-none');
+      document.getElementById('resultContent').classList.add('d-none');
+      return;
+    }
+
+    // Calculate result
+    let correct = 0, incorrect = 0, unanswered = 0;
+    const perQuestion = [];
+    for (let i = 1; i <= 10; i++) {
+      const ans = state.answers[i];
+      const correctAns = QUESTIONS[i - 1].correct;
+      let status, marks;
+      if (!ans) {
+        status = 'unanswered'; marks = 0; unanswered++;
+      } else if (ans === correctAns) {
+        status = 'correct'; marks = 2; correct++;
+      } else {
+        status = 'incorrect'; marks = -0.25; incorrect++;
+      }
+      perQuestion.push({ qNum: i, studentAns: ans, correctAns, status, marks });
+    }
+
+    const totalMarks = 20;
+    const obtained = correct * 2 + incorrect * (-0.25);
+    const obtainedRounded = Math.round(obtained * 100) / 100;
+    const percent = Math.max(0, Math.round((obtained / totalMarks) * 100));
+    const passed = obtainedRounded >= 10;
+
+    // Status banner
+    const banner = document.getElementById('statusBanner');
+    banner.classList.add(passed ? 'bg-success' : 'bg-danger');
+    document.getElementById('statusTitle').textContent = passed ? 'Congratulations! You Passed' : 'You Did Not Pass';
+    document.getElementById('statusSub').textContent = passed
+      ? 'Great job! You met the passing criteria.'
+      : 'Keep practicing. You need 10/20 to pass.';
+    document.getElementById('scoreDisplay').textContent = obtainedRounded;
+
+    // Submit time
+    const subDate = new Date(state.submitTime || Date.now());
+    document.getElementById('submitTime').textContent = subDate.toLocaleString();
+
+    // Circular score
+    const ring = document.getElementById('scoreRing');
+    const circumference = 326.7;
+    const offset = circumference - (percent / 100) * circumference;
+    setTimeout(() => {
+      ring.style.strokeDashoffset = offset;
+      ring.style.stroke = passed ? '#198754' : '#dc3545';
+    }, 200);
+    document.getElementById('percentDisplay').textContent = percent + '%';
+
+    // Counts
+    document.getElementById('correctCount').textContent = correct;
+    document.getElementById('incorrectCount').textContent = incorrect;
+    document.getElementById('unansweredCount').textContent = unanswered;
+
+    // Stats
+    document.getElementById('attemptedStat').textContent = correct + incorrect;
+    document.getElementById('obtainedStat').textContent = obtainedRounded;
+    document.getElementById('progressPercent').textContent = percent + '%';
+    const bar = document.getElementById('progressBar');
+    bar.style.width = percent + '%';
+    bar.classList.add(passed ? 'bg-success' : 'bg-danger');
+
+    // Review list
+    const reviewList = document.getElementById('reviewList');
+    const labels = ['A', 'B', 'C', 'D'];
+    perQuestion.forEach(item => {
+      const q = QUESTIONS[item.qNum - 1];
+      const card = document.createElement('div');
+      const statusClass = item.status === 'correct' ? 'review-correct'
+                        : item.status === 'incorrect' ? 'review-incorrect'
+                        : 'review-unanswered';
+      const statusLabel = item.status === 'correct' ? 'Correct'
+                        : item.status === 'incorrect' ? 'Incorrect'
+                        : 'Unanswered';
+      const statusIcon = item.status === 'correct' ? 'check-circle-fill'
+                       : item.status === 'incorrect' ? 'x-circle-fill'
+                       : 'dash-circle-fill';
+      const statusColor = item.status === 'correct' ? 'text-success'
+                        : item.status === 'incorrect' ? 'text-danger'
+                        : 'text-secondary';
+
+      let optionsHtml = '';
+      q.options.forEach((opt, idx) => {
+        let cls = 'review-option';
+        let badge = '';
+        if (labels[idx] === item.correctAns) {
+          cls += ' correct-answer';
+          badge = '<span class="badge bg-success ms-auto">Correct Answer</span>';
+        }
+        if (labels[idx] === item.studentAns && item.status === 'incorrect') {
+          cls += ' wrong-answer';
+          badge = '<span class="badge bg-danger ms-auto">Your Answer</span>';
+        }
+        if (labels[idx] === item.studentAns && item.status === 'correct') {
+          cls += ' correct-answer';
+          badge = '<span class="badge bg-success ms-auto">Your Answer</span>';
+        }
+        optionsHtml += `
+          <div class="${cls}">
+            <span class="option-label">${labels[idx]}</span>
+            <span class="option-text">${opt}</span>
+            ${badge}
+          </div>
+        `;
+      });
+
+      card.className = 'card border-0 shadow-sm rounded-4 review-card ' + statusClass;
+      card.innerHTML = `
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+            <div>
+              <span class="badge bg-primary-subtle text-primary fw-semibold me-2">Q${item.qNum}</span>
+              <span class="badge bg-light text-dark border">2 Marks</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="fw-bold ${statusColor}">
+                <i class="bi bi-${statusIcon} me-1"></i>${statusLabel}
+              </span>
+              <span class="badge ${item.marks > 0 ? 'bg-success' : item.marks < 0 ? 'bg-danger' : 'bg-secondary'}">
+                ${item.marks > 0 ? '+' : ''}${item.marks}
+              </span>
+            </div>
+          </div>
+          <h6 class="fw-semibold mb-3">${q.text}</h6>
+          <div class="review-options">${optionsHtml}</div>
+          ${item.status === 'correct' ? `<div class="explanation mt-3"><i class="bi bi-lightbulb text-warning me-1"></i><strong>Explanation:</strong> ${q.explanation || 'Correct answer verified.'}</div>` : ''}
+        </div>
+      `;
+      reviewList.appendChild(card);
+    });
+
+    // Restart
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      if (confirm('This will clear your current result and start a new demo exam. Continue?')) {
+        localStorage.removeItem('examState');
+        window.location.href = 'exam-instructions.html';
+      }
+    });
+  })();
+</script>
+</body>
+</html>
+
+
+              <script>
+                              /* script.js - Shared across all pages */
+
+// Question bank with correct answers and explanations
+const QUESTIONS = [
+  {
+    text: 'What is the capital of Bangladesh?',
+    options: ['Dhaka', 'Chattogram', 'Khulna', 'Rajshahi'],
+    correct: 'A',
+    explanation: 'Dhaka is the capital and largest city of Bangladesh.'
+  },
+  {
+    text: 'What is 15 × 4?',
+    options: ['45', '50', '60', '65'],
+    correct: 'C',
+    explanation: '15 multiplied by 4 equals 60.'
+  },
+  {
+    text: 'Which planet is known as the Red Planet?',
+    options: ['Venus', 'Mars', 'Jupiter', 'Saturn'],
+    correct: 'B',
+    explanation: 'Mars appears red due to iron oxide (rust) on its surface.'
+  },
+  {
+    text: 'Which language is primarily used to structure web pages?',
+    options: ['CSS', 'Python', 'HTML', 'SQL'],
+    correct: 'C',
+    explanation: 'HTML (HyperText Markup Language) provides the structure of web pages.'
+  },
+  {
+    text: 'What is the chemical formula for water?',
+    options: ['CO2', 'O2', 'H2O', 'NaCl'],
+    correct: 'C',
+    explanation: 'Water consists of two hydrogen atoms and one oxygen atom (H₂O).'
+  },
+  {
+    text: 'Which is the largest ocean on Earth?',
+    options: ['Atlantic Ocean', 'Indian Ocean', 'Arctic Ocean', 'Pacific Ocean'],
+    correct: 'D',
+    explanation: 'The Pacific Ocean is the largest and deepest ocean on Earth.'
+  },
+  {
+    text: 'What is the result of 144 ÷ 12?',
+    options: ['10', '11', '12', '14'],
+    correct: 'C',
+    explanation: '144 divided by 12 equals 12.'
+  },
+  {
+    text: 'Which device is used to input text into a computer?',
+    options: ['Monitor', 'Keyboard', 'Printer', 'Speaker'],
+    correct: 'B',
+    explanation: 'A keyboard is an input device used to type text into a computer.'
+  },
+  {
+    text: 'Which gas do plants absorb during photosynthesis?',
+    options: ['Oxygen', 'Nitrogen', 'Carbon dioxide', 'Hydrogen'],
+    correct: 'C',
+    explanation: 'Plants absorb carbon dioxide (CO₂) and release oxygen during photosynthesis.'
+  },
+  {
+    text: 'How many days are there in a leap year?',
+    options: ['364', '365', '366', '367'],
+    correct: 'C',
+    explanation: 'A leap year has 366 days, with February having 29 days.'
+  }
+];
+
+// localStorage helpers
+function loadState() {
+  try {
+    const raw = localStorage.getItem('examState');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function saveState(state) {
+  localStorage.setItem('examState', JSON.stringify(state));
+}
+
+
+              </script>
+                        </body>
+                        </html>
+                    
